@@ -1,4 +1,6 @@
-const API_KEY = "AIzaSyD_2Kry1FH7XV70qvx3jNH0onv4PwoL3M4";
+// --- CONFIGURATION ---
+const DEBUG_MODE = true; // Set to FALSE when you have a working API Key
+const API_KEY = "YOUR_API_KEY_HERE"; 
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
 let selectedImageBase64 = null;
@@ -13,8 +15,7 @@ async function startCamera() {
         cameraArea.style.display = 'block';
         document.getElementById('video').srcObject = stream;
     } catch (err) {
-        alert("Camera access denied or not available.");
-        console.error(err);
+        alert("Camera error: " + err.message);
     }
 }
 
@@ -31,10 +32,9 @@ function takeSnapshot() {
     preview.src = selectedImageBase64;
     preview.style.display = 'block';
     
-    // Stop camera stream
-    const stream = video.srcObject;
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+    // Stop camera
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
     }
     document.getElementById('cameraArea').style.display = 'none';
 }
@@ -42,40 +42,38 @@ function takeSnapshot() {
 // --- TRANSLATION LOGIC ---
 async function processTranslation() {
     const inputText = document.getElementById('inputText').value.trim();
-    const source = document.getElementById('sourceLang').value;
     const target = document.getElementById('targetLang').value;
     const outputField = document.getElementById('outputText');
     const translateBtn = document.getElementById('translateBtn');
 
     if (!inputText && !selectedImageBase64) {
-        alert("Please provide text or capture an image.");
+        alert("Please enter text or take a photo.");
         return;
     }
 
-    outputField.value = "Processing translation...";
+    outputField.value = DEBUG_MODE ? "DEBUG: Simulating AI..." : "Translating...";
     translateBtn.disabled = true;
 
-    try {
-        let prompt = `You are a professional ${source} to ${target} translator. `;
-        
-        if (selectedImageBase64 && !inputText) {
-            prompt += "Extract the text from this image and translate it. Provide ONLY the final translation.";
-        } else if (selectedImageBase64 && inputText) {
-            prompt += `The user provided this context: "${inputText}". Translate the text found in the image accordingly. Provide ONLY the translation.`;
-        } else {
-            prompt += `Translate the following: "${inputText}". Provide ONLY the translation.`;
-        }
+    if (DEBUG_MODE) {
+        // --- TEST MODE (No API Key) ---
+        setTimeout(() => {
+            const testResult = target === "Tibetan" 
+                ? "བཀྲ་ཤིས་བདེ་ལེགས་ (Test: Tashi Delek)" 
+                : "Hello, how are you? (Test Translation)";
+            outputField.value = testResult;
+            translateBtn.disabled = false;
+        }, 1000);
+        return;
+    }
 
+    // --- REAL AI MODE (Requires API Key) ---
+    try {
+        const prompt = `Translate to ${target}. Return ONLY the translation. Text: ${inputText}`;
         const body = {
             contents: [{
                 parts: [
                     { text: prompt },
-                    ...(selectedImageBase64 ? [{ 
-                        inline_data: { 
-                            mime_type: "image/jpeg", 
-                            data: selectedImageBase64.split(',')[1] 
-                        } 
-                    }] : [])
+                    ...(selectedImageBase64 ? [{ inline_data: { mime_type: "image/jpeg", data: selectedImageBase64.split(',')[1] } }] : [])
                 ]
             }]
         };
@@ -87,22 +85,9 @@ async function processTranslation() {
         });
 
         const data = await response.json();
-        
-        if (data.error) {
-            throw new Error(data.error.message);
-        }
-
-        const result = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-        if (result) {
-            outputField.value = result.trim();
-        } else {
-            throw new Error("No translation returned. Try a clearer image.");
-        }
-
+        outputField.value = data.candidates?.[0]?.content?.parts?.[0]?.text || "Error: No response.";
     } catch (err) {
-        outputField.value = "Error: " + err.message;
-        console.error(err);
+        outputField.value = "API Error: " + err.message;
     } finally {
         translateBtn.disabled = false;
     }
