@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhoti Translator Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tibetan:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-card">
+    <div class="header">
+        <h1>Bhoti Translator</h1>
+    </div>
+
+    <div id="cameraArea" class="camera-section">
+        <video id="video" autoplay playsinline></video>
+        <div class="capture-btn" onclick="takeSnapshot()"></div>
+    </div>
+
+    <div class="content">
+        <img id="preview-img" src="" alt="Captured Image">
+        
+        <div class="controls">
+            <select id="sourceLang">
+                <option value="English">English</option>
+                <option value="Tibetan">Tibetan</option>
+            </select>
+            <select id="targetLang">
+                <option value="Tibetan" selected>Tibetan</option>
+                <option value="English">English</option>
+            </select>
+        </div>
+
+        <button class="btn-sec" onclick="startCamera()">📷 Open Camera</button>
+        
+        <textarea id="inputText" placeholder="Type here or use camera..."></textarea>
+        
+        <button id="translateBtn" class="btn-main" onclick="processTranslation()">Translate Now</button>
+        
+        <textarea id="outputText" readonly placeholder="Translation output..."></textarea>
+    </div>
+</div>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+<script src="script.js"></script>
+</body>
+</html>

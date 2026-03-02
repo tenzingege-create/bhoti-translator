@@ -1,0 +1,129 @@
+:root {
+    --primary: #007bff;
+    --primary-hover: #0056b3;
+    --bg: #f0f2f5;
+    --text-dark: #1c1e21;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin: 0;
+}
+
+.app-card {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.header {
+    padding: 20px;
+    background: var(--primary);
+    color: white;
+    text-align: center;
+}
+
+.camera-section {
+    position: relative;
+    background: #000;
+    height: 300px;
+    display: none;
+}
+
+#video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.capture-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%); 
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 5px solid white;
+    background: rgba(255,255,255,0.3);
+    cursor: pointer;
+}
+
+.content {
+    padding: 20px;
+}
+
+textarea {
+    width: 100%;
+    height: 80px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 16px;
+    margin: 10px 0;
+    resize: none;
+}
+
+#outputText {
+    font-family: 'Noto Sans Tibetan', serif;
+    line-height: 2.4; /* Better for Tibetan characters */
+    background: #f9f9f9;
+    height: 140px;
+    font-size: 1.1rem;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+button {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-main {
+    background: var(--primary);
+    color: white;
+    width: 100%;
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+.btn-main:hover { background: var(--primary-hover); }
+.btn-main:disabled { background: #ccc; cursor: not-allowed; }
+
+.btn-sec {
+    background: #e4e6eb;
+    color: var(--text-dark);
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#preview-img {
+    width: 100%;
+    display: none;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+}
