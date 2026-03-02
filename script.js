@@ -1,23 +1,26 @@
-// --- CONFIG ---
-const DEBUG_MODE = true; // Set to FALSE when using a real API key
+// --- CONFIGURATION ---
+const DEBUG_MODE = true; // SET TO FALSE TO USE REAL API
 const API_KEY = "YOUR_API_KEY_HERE";
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
 let selectedImageBase64 = null;
+let stream = null;
 
-// --- NAVIGATION ---
+// --- NAVIGATION LOGIC ---
 function switchMode(event, mode) {
-    // Hide all mode sections
+    // 1. Hide all mode contents
     document.querySelectorAll('.mode-content').forEach(el => el.style.display = 'none');
+    
+    // 2. Remove active class from buttons
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     
-    // Reset image preview when switching
-    selectedImageBase64 = null;
-    document.getElementById('preview-img').style.display = 'none';
-
-    // Highlight current tab
+    // 3. Highlight clicked tab
     event.currentTarget.classList.add('active');
 
+    // 4. Stop camera if it's running
+    stopCamera();
+
+    // 5. Show correct section
     if (mode === 'camera') {
         document.getElementById('camera-section').style.display = 'block';
         startCamera();
@@ -26,13 +29,20 @@ function switchMode(event, mode) {
     }
 }
 
-// --- CAMERA & UPLOAD ---
+// --- CAMERA FUNCTIONS ---
 async function startCamera() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         document.getElementById('video').srcObject = stream;
     } catch (err) {
-        alert("Camera access denied.");
+        alert("Camera access denied or unavailable.");
+    }
+}
+
+function stopCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
     }
 }
 
@@ -40,6 +50,7 @@ function takeSnapshot() {
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const preview = document.getElementById('preview-img');
+    const clearBtn = document.getElementById('clear-img');
     
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -48,28 +59,36 @@ function takeSnapshot() {
     selectedImageBase64 = canvas.toDataURL('image/jpeg');
     preview.src = selectedImageBase64;
     preview.style.display = 'block';
+    clearBtn.style.display = 'block';
     
-    // Stop camera to save battery
-    if (video.srcObject) {
-        video.srcObject.getTracks().forEach(track => track.stop());
-    }
+    stopCamera();
     document.getElementById('camera-section').style.display = 'none';
 }
 
+// --- FILE UPLOAD ---
 function handleFileUpload(event) {
     const file = event.target.files[0];
+    if (!file) return;
+
     const reader = new FileReader();
     reader.onloadend = () => {
         selectedImageBase64 = reader.result;
         const preview = document.getElementById('preview-img');
         preview.src = selectedImageBase64;
         preview.style.display = 'block';
+        document.getElementById('clear-img').style.display = 'block';
         document.getElementById('upload-section').style.display = 'none';
     };
-    if (file) reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
 }
 
-// --- TRANSLATION CORE ---
+function clearImage() {
+    selectedImageBase64 = null;
+    document.getElementById('preview-img').style.display = 'none';
+    document.getElementById('clear-img').style.display = 'none';
+}
+
+// --- API / TRANSLATION LOGIC ---
 async function processTranslation() {
     const inputText = document.getElementById('inputText').value.trim();
     const target = document.getElementById('targetLang').value;
@@ -86,14 +105,16 @@ async function processTranslation() {
 
     if (DEBUG_MODE) {
         setTimeout(() => {
-            outputField.value = (target === "Tibetan") ? "བཀྲ་ཤིས་བདེ་ལེགས་ (Test: Tashi Delek)" : "Hello! (Test Result)";
+            outputField.value = (target === "Tibetan") 
+                ? "བཀྲ་ཤིས་བདེ་ལེགས་ (Test Success)" 
+                : "Hello World! (Test Success)";
             translateBtn.disabled = false;
-        }, 1000);
+        }, 800);
         return;
     }
 
     try {
-        const prompt = `Translate to ${target}. Return ONLY the translation. Text: ${inputText}`;
+        const prompt = `Translate to ${target}. Return ONLY translation. Context: ${inputText}`;
         const body = {
             contents: [{
                 parts: [
@@ -110,7 +131,7 @@ async function processTranslation() {
         });
 
         const data = await response.json();
-        outputField.value = data.candidates?.[0]?.content?.parts?.[0]?.text || "No results found.";
+        outputField.value = data.candidates?.[0]?.content?.parts?.[0]?.text || "No result.";
     } catch (err) {
         outputField.value = "Error: " + err.message;
     } finally {
@@ -120,6 +141,7 @@ async function processTranslation() {
 
 function copyResult() {
     const text = document.getElementById('outputText').value;
+    if (!text) return;
     navigator.clipboard.writeText(text);
     alert("Copied to clipboard!");
 }

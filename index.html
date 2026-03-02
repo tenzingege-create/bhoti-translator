@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhoti Translator Pro</title>
+    <title>Bhoti Pro Translator</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tibetan:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -33,13 +33,16 @@
 
         <div id="upload-section" class="mode-content" style="display:none;">
             <div class="upload-box" onclick="document.getElementById('fileInput').click()">
-                <span style="font-size: 2rem;">📁</span>
+                <span style="font-size: 2.5rem;">📁</span>
                 <p>Click to Upload Image</p>
                 <input type="file" id="fileInput" hidden accept="image/*" onchange="handleFileUpload(event)">
             </div>
         </div>
 
-        <img id="preview-img" src="" alt="Preview">
+        <div id="preview-container">
+            <img id="preview-img" src="" alt="Preview" style="display:none;">
+            <button id="clear-img" onclick="clearImage()" style="display:none;">✕ Remove Image</button>
+        </div>
         
         <div class="controls">
             <select id="sourceLang">
@@ -53,13 +56,13 @@
             </select>
         </div>
 
-        <textarea id="inputText" placeholder="Type your text here..."></textarea>
+        <textarea id="inputText" placeholder="Type or use an image..."></textarea>
         
         <button id="translateBtn" class="btn-main" onclick="processTranslation()">Translate Now</button>
         
         <div class="output-container">
-            <textarea id="outputText" readonly placeholder="Translation will appear here..."></textarea>
-            <button class="copy-btn" onclick="copyResult()">📋 Copy</button>
+            <textarea id="outputText" readonly placeholder="Translation..."></textarea>
+            <button class="copy-btn" onclick="copyResult()">📋 Copy Result</button>
         </div>
     </div>
 </div>
