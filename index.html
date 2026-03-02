@@ -5,46 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bhoti Translator Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tibetan:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="icon" type="image/png" href="image_0.png">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="app-card">
     <div class="header">
-        <h1>Bhoti Translator</h1>
+        <img src="image_0.png" alt="Bhoti Translator Pro Icon" class="header-icon">
+        <h1>Bhoti Pro</h1>
+        <p>English ↔ Tibetan</p>
     </div>
 
-    <div id="cameraArea" class="camera-section">
-        <video id="video" autoplay playsinline></video>
-        <div class="capture-btn" onclick="takeSnapshot()"></div>
+    <div class="tabs">
+        <button id="tab-text" class="tab-btn active" onclick="switchMode('text')">Text</button>
+        <button id="tab-camera" class="tab-btn" onclick="switchMode('camera')">Camera</button>
+        <button id="tab-upload" class="tab-btn" onclick="switchMode('upload')">Upload</button>
     </div>
 
     <div class="content">
-        <img id="preview-img" src="" alt="Captured Image">
+        <div id="camera-section" class="mode-content" style="display:none;">
+            <div class="video-wrapper">
+                <video id="video" autoplay playsinline></video>
+                <button class="capture-btn" onclick="takeSnapshot()"></button>
+            </div>
+            <button class="btn-sec icon-btn" onclick="startCamera()">
+                <span class="icon">🔄</span> Restart Camera
+            </button>
+        </div>
+
+        <div id="upload-section" class="mode-content" style="display:none;">
+            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+                <span class="upload-icon">📁</span>
+                <span>Click to Upload Image</span>
+                <input type="file" id="fileInput" hidden accept="image/*" onchange="handleFileUpload(event)">
+            </div>
+        </div>
+
+        <img id="preview-img" src="" alt="Preview">
         
         <div class="controls">
             <select id="sourceLang">
                 <option value="English">English</option>
                 <option value="Tibetan">Tibetan</option>
             </select>
+            <span class="arrow">⇄</span>
             <select id="targetLang">
                 <option value="Tibetan" selected>Tibetan</option>
                 <option value="English">English</option>
             </select>
         </div>
 
-        <button class="btn-sec" onclick="startCamera()">📷 Open Camera</button>
+        <textarea id="inputText" placeholder="Type or use an image..."></textarea>
         
-        <textarea id="inputText" placeholder="Type here or use camera..."></textarea>
+        <button id="translateBtn" class="btn-main icon-btn" onclick="processTranslation()">
+            <span class="icon">A/あ</span> Translate Now
+        </button>
         
-        <button id="translateBtn" class="btn-main" onclick="processTranslation()">Translate Now</button>
-        
-        <textarea id="outputText" readonly placeholder="Translation output..."></textarea>
+        <div class="output-container">
+            <textarea id="outputText" readonly placeholder="Translation will appear here..."></textarea>
+            <button class="copy-btn icon-btn" onclick="copyResult()">
+                <span class="icon">📋</span> Copy
+            </button>
+        </div>
     </div>
 </div>
 
 <canvas id="canvas" style="display:none;"></canvas>
-
 <script src="script.js"></script>
 </body>
 </html>
