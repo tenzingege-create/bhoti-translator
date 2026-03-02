@@ -1,4 +1,4 @@
-const API_KEY = "YOUR_NEW_KEY_HERE";
+const API_KEY = "AIzaSyD_2Kry1FH7XV70qvx3jNH0onv4PwoL3M4";
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
 let selectedImageBase64 = null;
