@@ -11,28 +11,30 @@
 
 <div class="app-card">
     <div class="header">
-        <h1>Bhoti Translator</h1>
+        <div class="brand-icon">BT</div>
+        <h1>Bhoti Pro</h1>
         <p>English ↔ Tibetan</p>
     </div>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchMode('text')">Text</button>
-        <button class="tab-btn" onclick="switchMode('camera')">Camera</button>
-        <button class="tab-btn" onclick="switchMode('upload')">Upload</button>
+        <button class="tab-btn active" onclick="switchMode(event, 'text')">Text</button>
+        <button class="tab-btn" onclick="switchMode(event, 'camera')">Camera</button>
+        <button class="tab-btn" onclick="switchMode(event, 'upload')">Upload</button>
     </div>
 
     <div class="content">
         <div id="camera-section" class="mode-content" style="display:none;">
             <div class="video-wrapper">
                 <video id="video" autoplay playsinline></video>
-                <button class="capture-btn" onclick="takeSnapshot()"></button>
+                <div class="capture-btn" onclick="takeSnapshot()"></div>
             </div>
-            <button class="btn-sec" onclick="startCamera()">Restart Camera</button>
+            <button class="btn-sec" onclick="startCamera()">🔄 Restart Camera</button>
         </div>
 
         <div id="upload-section" class="mode-content" style="display:none;">
             <div class="upload-box" onclick="document.getElementById('fileInput').click()">
-                <span>📁 Click to Upload Image</span>
+                <span style="font-size: 2rem;">📁</span>
+                <p>Click to Upload Image</p>
                 <input type="file" id="fileInput" hidden accept="image/*" onchange="handleFileUpload(event)">
             </div>
         </div>
@@ -44,7 +46,7 @@
                 <option value="English">English</option>
                 <option value="Tibetan">Tibetan</option>
             </select>
-            <span class="arrow">→</span>
+            <span class="arrow">⇄</span>
             <select id="targetLang">
                 <option value="Tibetan" selected>Tibetan</option>
                 <option value="English">English</option>
